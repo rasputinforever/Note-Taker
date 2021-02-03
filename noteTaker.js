@@ -35,7 +35,12 @@ const savedNotes = [
     {
         title: "Test Title",
         text: "Test text",
-        id: 1234
+        id: "1234"
+    },
+    {
+        title: "Test Title 2",
+        text: "Test text 2",
+        id: "1235"
     }
 ];
 
@@ -47,8 +52,24 @@ app.get("/home", (req, res) => res.sendFile(path.join(__dirname, "./Develop/publ
 app.get("/notes", (req, res) => res.sendFile(path.join(__dirname, "./Develop/public/notes.html")));
 
 
-// getNotes pathway: /api/notes
+// getNotes
 app.get("/api/notes", (req, res) => res.json(savedNotes));
+
+// deleteNote
+app.delete("/api/notes/:id", (req, res) => {
+    
+    // get id of deleted item
+    const delNoteID = req.params.id;
+    // find target obj in notes array
+    delObj = savedNotes.find(note => note.id === delNoteID);
+    // get index of that object
+    delIndex = savedNotes.indexOf(delObj);
+    // delete that object
+    savedNotes.splice(delIndex, 1);
+
+    //finalize
+    res.send();
+  });
 
 // put post stuff here
 
