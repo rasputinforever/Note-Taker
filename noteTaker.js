@@ -17,6 +17,8 @@
 const express = require("express");
 const path = require("path");
 
+const fs = require('fs');
+
 // imports
 const readJSON = require('./fileSystem.js')
 // const writeJSON = require('./fileSystem.js')
@@ -77,16 +79,36 @@ app.delete("/api/notes/:id", (req, res) => {
 
 // put saveNote here which is a POST
 app.post("/api/notes", (req, res) => {
-    
-    // get new item
-    const newNote = req.body
-    // create a unique id, save as string so it jives with getNote
-    // using Date.now gives time in milliseconds. This would scale poorly, but for this project it seems fine.
-    newNote.id = `${Date.now()}`;
-    // jam it into savedNotes
-    savedNotes = [...savedNotes, newNote];
-    // finalize
-    res.send();
+    fs.readFile('./Develop/db/db.json', 'utf8' , (err, data) => {
+        if (err) {
+          console.error(err);
+          return
+        }
+
+        // get new item
+        const newNote = req.body
+        // create a unique id, save as string so it jives with getNote
+        // using Date.now gives time in milliseconds. This would scale poorly, but for this project it seems fine.
+        newNote.id = `${Date.now()}`;
+
+        let savedNotes = JSON.parse(data);
+        // jam it into savedNotes
+        savedNotes = [...savedNotes, newNote];
+
+        
+        fs.writeFile('./Develop/db/db.json', JSON.stringify(savedNotes), err => {
+        if (err) {
+            console.error(err)
+            return
+        }
+        
+        // finalize
+        res.send();
+        })
+
+      });
+
+
 
 });
 

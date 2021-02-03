@@ -3,7 +3,6 @@
 
 // file system, read/write files
 
-const { json } = require('express');
 const fs = require('fs');
 // this allows asynchronicity
 const util = require('util');
