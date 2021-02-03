@@ -24,6 +24,11 @@ const PORT = 4000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+
+// get the sent HTML to use the public js and css
+app.use(express.static('./Develop/public'));
+
+
 // connect this to fs eventually
 // const savedNotes = getSavedNotes();
 const savedNotes = [
