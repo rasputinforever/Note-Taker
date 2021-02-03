@@ -79,7 +79,9 @@ app.post("/api/notes", (req, res) => {
     // create a unique id, save as string so it jives with getNote
     // using Date.now gives time in milliseconds. This would scale poorly, but for this project it seems fine.
     newNote.id = `${Date.now()}`;
+    // jam it into savedNotes
     savedNotes = [...savedNotes, newNote];
+    // finalize
     res.send();
 
 });
