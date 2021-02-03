@@ -13,9 +13,13 @@
     // step 2: connect to inputs on given pages
 
 
-
+// npms
 const express = require("express");
 const path = require("path");
+
+// imports
+const readJSON = require('./fileSystem.js')
+// const writeJSON = require('./fileSystem.js')
 
 
 const app = express();
@@ -52,8 +56,8 @@ app.get("/home", (req, res) => res.sendFile(path.join(__dirname, "./Develop/publ
 app.get("/notes", (req, res) => res.sendFile(path.join(__dirname, "./Develop/public/notes.html")));
 
 
-// getNotes
-app.get("/api/notes", (req, res) => res.json(savedNotes));
+// getNotes from db
+app.get("/api/notes", (req, res) => res.sendFile(path.join(__dirname, "./Develop/db/db.json")));
 
 // deleteNote
 app.delete("/api/notes/:id", (req, res) => {
