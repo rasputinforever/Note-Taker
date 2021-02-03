@@ -46,6 +46,10 @@ app.get("/", (req, res) => res.sendFile(path.join(__dirname, "./Develop/public/i
 app.get("/home", (req, res) => res.sendFile(path.join(__dirname, "./Develop/public/index.html")));
 app.get("/notes", (req, res) => res.sendFile(path.join(__dirname, "./Develop/public/notes.html")));
 
+
+// getNotes pathway: /api/notes
+app.get("/api/notes", (req, res) => res.json(savedNotes));
+
 // put post stuff here
 
 app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
