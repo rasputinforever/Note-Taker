@@ -31,7 +31,7 @@ app.use(express.static('./Develop/public'));
 
 // connect this to fs eventually
 // const savedNotes = getSavedNotes();
-const savedNotes = [
+let savedNotes = [
     {
         title: "Test Title",
         text: "Test text",
@@ -71,6 +71,17 @@ app.delete("/api/notes/:id", (req, res) => {
     res.send();
   });
 
-// put post stuff here
+// put saveNote here which is a POST
+app.post("/api/notes", (req, res) => {
+    
+    // get new item
+    const newNote = req.body
+    // create a unique id, save as string so it jives with getNote
+    // using Date.now gives time in milliseconds. This would scale poorly, but for this project it seems fine.
+    newNote.id = `${Date.now()}`;
+    savedNotes = [...savedNotes, newNote];
+    res.send();
+
+});
 
 app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
