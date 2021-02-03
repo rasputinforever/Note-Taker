@@ -34,23 +34,6 @@ app.use(express.json());
 // get the sent HTML to use the public js and css
 app.use(express.static('./Develop/public'));
 
-
-// connect this to fs eventually
-// const savedNotes = getSavedNotes();
-let savedNotes = [
-    {
-        title: "Test Title",
-        text: "Test text",
-        id: "1234"
-    },
-    {
-        title: "Test Title 2",
-        text: "Test text 2",
-        id: "1235"
-    }
-];
-
-
 //html routes
 
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "./Develop/public/index.html")));
@@ -61,48 +44,73 @@ app.get("/notes", (req, res) => res.sendFile(path.join(__dirname, "./Develop/pub
 // getNotes from db
 app.get("/api/notes", (req, res) => res.sendFile(path.join(__dirname, "./Develop/db/db.json")));
 
-// deleteNote
+// deleteNote. REceives a DELETE funciton. Very similar to the POST function below, but deletes instead of adds the new item.
 app.delete("/api/notes/:id", (req, res) => {
-    
-    // get id of deleted item
-    const delNoteID = req.params.id;
-    // find target obj in notes array
-    delObj = savedNotes.find(note => note.id === delNoteID);
-    // get index of that object
-    delIndex = savedNotes.indexOf(delObj);
-    // delete that object
-    savedNotes.splice(delIndex, 1);
-
-    //finalize
-    res.send();
-  });
-
-// put saveNote here which is a POST
-app.post("/api/notes", (req, res) => {
+    // get file
     fs.readFile('./Develop/db/db.json', 'utf8' , (err, data) => {
         if (err) {
-          console.error(err);
+            // console log to server if there's an error here
+          console.error("Error in Read File: ", err);
+          return
+        }
+        // get id of deleted item
+        const delNoteID = req.params.id;
+        console.log(req.params.id)
+        // parse out the JSON string which is an array of objects
+        let savedNotes = JSON.parse(data);
+        // find target obj in notes array
+        delObj = savedNotes.find(note => note.id === delNoteID);
+        // get index of that object
+        delIndex = savedNotes.indexOf(delObj);
+        // delete that object
+        savedNotes.splice(delIndex, 1);
+
+        fs.writeFile('./Develop/db/db.json', JSON.stringify(savedNotes), err => {
+        if (err) {
+            // console log to server if there's an error here
+          console.error("Error in Write File: ", err);
+            return
+        }
+        
+        // finalize. file is saved locally.
+        res.send();
+        })
+
+      });
+
+
+  });
+
+// put saveNote here which is a POST. There are a series of "daisy-chained" fs functions that allow the series of steps to work despite being asynchronous in nature. The steps are simple. Refractor this later into a new module... if you can!
+app.post("/api/notes", (req, res) => {
+    // get file
+    fs.readFile('./Develop/db/db.json', 'utf8' , (err, data) => {
+        if (err) {
+            // console log to server if there's an error here
+          console.error("Error in Read File: ", err);
           return
         }
 
-        // get new item
+        // get new note which is an object
         const newNote = req.body
         // create a unique id, save as string so it jives with getNote
         // using Date.now gives time in milliseconds. This would scale poorly, but for this project it seems fine.
         newNote.id = `${Date.now()}`;
 
+        // parse out the JSON string which is an array of objects
         let savedNotes = JSON.parse(data);
         // jam it into savedNotes
         savedNotes = [...savedNotes, newNote];
 
-        
+
         fs.writeFile('./Develop/db/db.json', JSON.stringify(savedNotes), err => {
         if (err) {
-            console.error(err)
+            // console log to server if there's an error here
+          console.error("Error in Write File: ", err);
             return
         }
         
-        // finalize
+        // finalize. file is saved locally.
         res.send();
         })
 
