@@ -65,16 +65,8 @@ app.delete("/api/notes/:id", (req, res) => {
         // delete that object
         savedNotes.splice(delIndex, 1);
 
-        fs.writeFile('./Develop/db/db.json', JSON.stringify(savedNotes), err => {
-        if (err) {
-            // console log to server if there's an error here
-          console.error("Error in Write File: ", err);
-            return
-        }
         
-        // finalize. file is saved locally.
-        res.send();
-        })
+        writeJSON(savedNotes, res);
 
       });
 
@@ -103,7 +95,20 @@ app.post("/api/notes", (req, res) => {
         savedNotes = [...savedNotes, newNote];
 
 
-        fs.writeFile('./Develop/db/db.json', JSON.stringify(savedNotes), err => {
+        writeJSON(savedNotes, res);
+
+      });
+
+
+
+});
+
+app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
+
+// things to send to a module if possible
+
+function writeJSON(arr, res) {
+    fs.writeFile('./Develop/db/db.json', JSON.stringify(arr), err => {
         if (err) {
             // console log to server if there's an error here
           console.error("Error in Write File: ", err);
@@ -113,11 +118,4 @@ app.post("/api/notes", (req, res) => {
         // finalize. file is saved locally.
         res.send();
         })
-
-      });
-
-
-
-});
-
-app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
+}
