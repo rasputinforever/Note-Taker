@@ -13,7 +13,7 @@ function readJSON() {
               console.error("Error in Read File: ", err);
               return
             }
-                console.log('file read!')
+                console.log('JSON File read!')
                    // error catcher, basically. Sends back the notes array if all goes to plan
                 if (data) {
                     resolve(data)

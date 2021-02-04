@@ -1,26 +1,19 @@
 // MVP todos... 
     // how does this work with Heroku?
-    // READFILE should be refactored. I think I can...
-
 
 // npms
 const express = require("express");
 const path = require("path");
 
-const fs = require('fs');
-
 // imports
 const writeJSON = require('./fileSystemWrite.js')
 const readJSON = require('./fileSystemRead.js')
-
-
 
 const app = express();
 const PORT = 4000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
 
 // get the sent HTML to use the public js and css
 app.use(express.static('./Develop/public'));
@@ -30,7 +23,6 @@ app.use(express.static('./Develop/public'));
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "./Develop/public/index.html")));
 app.get("/home", (req, res) => res.sendFile(path.join(__dirname, "./Develop/public/index.html")));
 app.get("/notes", (req, res) => res.sendFile(path.join(__dirname, "./Develop/public/notes.html")));
-
 
 // getNotes from db
 app.get("/api/notes", (req, res) => res.sendFile(path.join(__dirname, "./Develop/db/db.json")));
@@ -113,6 +105,3 @@ app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
         )        
     });
   }
-
-
-  
