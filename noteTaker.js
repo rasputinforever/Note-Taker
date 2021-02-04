@@ -1,16 +1,6 @@
-// starting off...
-    // need an express server that servs up the given index.html, notes.html
-        // delivers CSS and JS files with those... HOW? Google!
-    
-    // both pages have functionality that write data back to the JSON string
-        // write to requires... all info provided AND a unique key
-            // if we're going off the dome, the key can = something based on the exact moment of submission in milliseconds or something like that
-
-    // where is the JSON file served and saved from? Local file directory. 
-        // fs stuff needs to be on its own .js file called "db.js" and will be async because reading/writing is just nice that way.
-
-    // step 1: outline the IN and OUTs
-    // step 2: connect to inputs on given pages
+// MVP todos... 
+    // how does this work with Heroku?
+    // READFILE should be refactored. I think I can...
 
 
 // npms
@@ -77,8 +67,6 @@ app.post("/api/notes", (req, res) => {
 
 // open the lines
 app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
-
-
   
 // this right here will stay on this js file. Refactored into a promise. DO THIS before writing file! 
   function newNotePOST(req, data) {
@@ -103,7 +91,7 @@ app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
         
     });
   }
-
+// DELETE actions as PROMISE!
   function newNoteDELETE(req, data) {
     return new Promise((resolve, reject) => {
 
@@ -129,7 +117,3 @@ app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
         
     });
   }
-
-
-  // things to send to a module if possible
-
