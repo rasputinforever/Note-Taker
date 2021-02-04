@@ -4,19 +4,22 @@
 // file system, read/write files
 
 const fs = require('fs');
-// this allows asynchronicity
-const util = require('util');
 
-// simply reads and returns the file
-
-const readFile = util.promisify(fs.readFile);
-
-function readJSON() {
-    return readFile('./Develop/db/db.json', 'utf8');
+function writeJSON(arr, res) {
+    fs.writeFile('./Develop/db/db.json', JSON.stringify(arr), err => {
+        if (err) {
+            // console log to server if there's an error here
+          console.error("Error in Write File: ", err);
+            return
+        }
+        
+        // finalize. file is saved locally. Putting the res.send() here ensures this occurs ONLY after the writing of the file.
+        console.log('saved notes array as JSON to database!')
+        res.send();
+        })
 }
 
-//export
- module.exports = readJSON;
+module.exports = writeJSON;
 
 
 

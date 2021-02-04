@@ -20,8 +20,7 @@ const path = require("path");
 const fs = require('fs');
 
 // imports
-const readJSON = require('./fileSystem.js')
-// const writeJSON = require('./fileSystem.js')
+const writeJSON = require('./fileSystem.js')
 
 
 const app = express();
@@ -83,6 +82,25 @@ app.post("/api/notes", (req, res) => {
           return
         }
 
+          //usage
+          newNotePOST(req, data).then((noteArr) => {
+                writeJSON(noteArr, res)
+          });
+          
+        
+      });
+
+
+
+});
+
+app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
+
+// things to send to a module if possible
+  
+// this right here will stay on this js file. Refactored into a promise. DO THIS before writing file! 
+  function newNotePOST(req, data) {
+    return new Promise((resolve, reject) => {
         // get new note which is an object
         const newNote = req.body
         // create a unique id, save as string so it jives with getNote
@@ -93,29 +111,14 @@ app.post("/api/notes", (req, res) => {
         let savedNotes = JSON.parse(data);
         // jam it into savedNotes
         savedNotes = [...savedNotes, newNote];
-
-
-        writeJSON(savedNotes, res);
-
-      });
-
-
-
-});
-
-app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
-
-// things to send to a module if possible
-
-function writeJSON(arr, res) {
-    fs.writeFile('./Develop/db/db.json', JSON.stringify(arr), err => {
-        if (err) {
-            // console log to server if there's an error here
-          console.error("Error in Write File: ", err);
-            return
-        }
+        // error catcher, basically. Sends back the notes array if all goes to plan
+        if (savedNotes) {
+            resolve(savedNotes)
+        } else (
+            console.log("Error in creating Notes Array")
+        )
         
-        // finalize. file is saved locally.
-        res.send();
-        })
-}
+    });
+  }
+
+
