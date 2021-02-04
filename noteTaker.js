@@ -52,24 +52,11 @@ app.delete("/api/notes/:id", (req, res) => {
           console.error("Error in Read File: ", err);
           return
         }
-        // get id of deleted item
-        const delNoteID = req.params.id;
-        console.log(req.params.id)
-        // parse out the JSON string which is an array of objects
-        let savedNotes = JSON.parse(data);
-        // find target obj in notes array
-        delObj = savedNotes.find(note => note.id === delNoteID);
-        // get index of that object
-        delIndex = savedNotes.indexOf(delObj);
-        // delete that object
-        savedNotes.splice(delIndex, 1);
-
-        
-        writeJSON(savedNotes, res);
-
+        // action! first, delete the note from the notes array, THEN save it to the JSON db!
+        newNoteDELETE(req, data).then((noteArr) => {
+            writeJSON(noteArr, res);
+        })
       });
-
-
   });
 
 // put saveNote here which is a POST. There are a series of "daisy-chained" fs functions that allow the series of steps to work despite being asynchronous in nature. The steps are simple. Refractor this later into a new module... if you can!
@@ -81,28 +68,24 @@ app.post("/api/notes", (req, res) => {
           console.error("Error in Read File: ", err);
           return
         }
-
-          //usage
+          //usage. create the notes array, then write to file, then end the transmission
           newNotePOST(req, data).then((noteArr) => {
                 writeJSON(noteArr, res)
           });
-          
-        
       });
-
-
-
 });
 
+// open the lines
 app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
 
-// things to send to a module if possible
+
   
 // this right here will stay on this js file. Refactored into a promise. DO THIS before writing file! 
   function newNotePOST(req, data) {
     return new Promise((resolve, reject) => {
         // get new note which is an object
         const newNote = req.body
+
         // create a unique id, save as string so it jives with getNote
         // using Date.now gives time in milliseconds. This would scale poorly, but for this project it seems fine.
         newNote.id = `${Date.now()}`;
@@ -121,4 +104,32 @@ app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
     });
   }
 
+  function newNoteDELETE(req, data) {
+    return new Promise((resolve, reject) => {
+
+        // get id of deleted item
+        const delNoteID = req.params.id;
+        console.log(req.params.id)
+        // parse out the JSON string which is an array of objects
+        let savedNotes = JSON.parse(data);
+        // find target obj in notes array
+        delObj = savedNotes.find(note => note.id === delNoteID);
+        // get index of that object
+        delIndex = savedNotes.indexOf(delObj);
+        // delete that object
+        savedNotes.splice(delIndex, 1);
+
+
+        // error catcher, basically. Sends back the notes array if all goes to plan
+        if (savedNotes) {
+            resolve(savedNotes)
+        } else (
+            console.log("Error in creating Notes Array")
+        )
+        
+    });
+  }
+
+
+  // things to send to a module if possible
 
