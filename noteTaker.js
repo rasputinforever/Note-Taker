@@ -10,7 +10,9 @@ const path = require("path");
 const fs = require('fs');
 
 // imports
-const writeJSON = require('./fileSystem.js')
+const writeJSON = require('./fileSystemWrite.js')
+const readJSON = require('./fileSystemRead.js')
+
 
 
 const app = express();
@@ -34,41 +36,36 @@ app.get("/notes", (req, res) => res.sendFile(path.join(__dirname, "./Develop/pub
 app.get("/api/notes", (req, res) => res.sendFile(path.join(__dirname, "./Develop/db/db.json")));
 
 // deleteNote. REceives a DELETE funciton. Very similar to the POST function below, but deletes instead of adds the new item.
-app.delete("/api/notes/:id", (req, res) => {
+app.delete("/api/notes/:id", (req, res) => {    
+    console.log("initiating DELETE request to REMOVE Note!")
     // get file
-    fs.readFile('./Develop/db/db.json', 'utf8' , (err, data) => {
-        if (err) {
-            // console log to server if there's an error here
-          console.error("Error in Read File: ", err);
-          return
-        }
+    readJSON().then((data) => {
         // action! first, delete the note from the notes array, THEN save it to the JSON db!
+        console.log('file data retrieved!')
         newNoteDELETE(req, data).then((noteArr) => {
+            console.log("new notes array retrieved!")
             writeJSON(noteArr, res);
-        })
-      });
-  });
+        });
+    });
+});
 
 // put saveNote here which is a POST. There are a series of "daisy-chained" fs functions that allow the series of steps to work despite being asynchronous in nature. The steps are simple. Refractor this later into a new module... if you can!
 app.post("/api/notes", (req, res) => {
+    console.log("initiating POST request to ADD new Note!")
     // get file
-    fs.readFile('./Develop/db/db.json', 'utf8' , (err, data) => {
-        if (err) {
-            // console log to server if there's an error here
-          console.error("Error in Read File: ", err);
-          return
-        }
-          //usage. create the notes array, then write to file, then end the transmission
-          newNotePOST(req, data).then((noteArr) => {
+    readJSON().then((data) => {
+            //usage. create the notes array, then write to file, then end the transmission
+            newNotePOST(req, data).then((noteArr) => {
                 writeJSON(noteArr, res)
-          });
+            })
       });
 });
 
 // open the lines
 app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
   
-// this right here will stay on this js file. Refactored into a promise. DO THIS before writing file! 
+// refactored functions
+// adds note from POSTED request
   function newNotePOST(req, data) {
     return new Promise((resolve, reject) => {
         // get new note which is an object
@@ -86,18 +83,19 @@ app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
         if (savedNotes) {
             resolve(savedNotes)
         } else (
-            console.log("Error in creating Notes Array")
+            console.log("Error in adding Note to Notes Array")
         )
         
     });
   }
-// DELETE actions as PROMISE!
+// Removes note from DELETE request
   function newNoteDELETE(req, data) {
     return new Promise((resolve, reject) => {
 
         // get id of deleted item
         const delNoteID = req.params.id;
-        console.log(req.params.id)
+        console.log("deleted note id: ", req.params.id)
+
         // parse out the JSON string which is an array of objects
         let savedNotes = JSON.parse(data);
         // find target obj in notes array
@@ -107,13 +105,14 @@ app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
         // delete that object
         savedNotes.splice(delIndex, 1);
 
-
         // error catcher, basically. Sends back the notes array if all goes to plan
         if (savedNotes) {
             resolve(savedNotes)
         } else (
-            console.log("Error in creating Notes Array")
-        )
-        
+            console.log("Error in deleting Note from Notes Array")
+        )        
     });
   }
+
+
+  
