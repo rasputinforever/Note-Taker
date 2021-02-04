@@ -6,8 +6,8 @@ const express = require("express");
 const path = require("path");
 
 // imports
-const writeJSON = require('./fileSystemWrite.js')
-const readJSON = require('./fileSystemRead.js')
+const writeJSON = require('./Modules/fileSystemWrite.js')
+const readJSON = require('./Modules/fileSystemRead.js')
 
 const app = express();
 const PORT = 4000;
